@@ -1,0 +1,89 @@
+version: "3"
+
+services:
+  database:
+    image: postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+  redis:
+    image: redis
+  worker:
+    image: localhost:5000/tempapp
+    command: make worker-local
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./app:/app
+      - ./creds:/creds
+    links:
+      - database
+      - redis
+    environment:
+      TEMPAPP_DB_NAME: postgres
+      TEMPAPP_DB_USER: postgres
+      TEMPAPP_DB_PASSWORD: password
+      TEMPAPP_DB_HOST: database
+      TEMPAPP_DB_PORT: 5432
+      CELERY_HOST: redis
+      REDIS_HOST: redis
+      DJANGO_SETTINGS_MODULE: tempapp.settings.dev
+      # Read from .env
+      SENDGRID_API_KEY: $SENDGRID_API_KEY
+      STRIPE_API_KEY: $STRIPE_API_KEY
+      AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+      AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+  web:
+    image: localhost:5000/tempapp
+    command: ./manage.py runserver 0.0.0.0:8000
+    ports:
+      - 8000:8000
+    volumes:
+      - ./app:/app
+    links:
+      - database
+      - redis
+      - worker
+    environment:
+      TEMPAPP_DB_NAME: postgres
+      TEMPAPP_DB_USER: postgres
+      TEMPAPP_DB_PASSWORD: password
+      TEMPAPP_DB_HOST: database
+      TEMPAPP_DB_PORT: 5432
+      CELERY_HOST: redis
+      REDIS_HOST: redis
+      DJANGO_SETTINGS_MODULE: tempapp.settings.dev
+      # Read from .env
+      SENDGRID_API_KEY: $SENDGRID_API_KEY
+      STRIPE_API_KEY: $STRIPE_API_KEY
+      GOOGLE_OAUTH2_KEY: $GOOGLE_OAUTH2_KEY
+      GOOGLE_OAUTH2_SECRET: $GOOGLE_OAUTH2_SECRET
+      FACEBOOK_KEY: $FACEBOOK_KEY
+      FACEBOOK_SECRET: $FACEBOOK_SECRET
+      AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+      AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+
+  test:
+    image: localhost:5000/tempapp
+    volumes:
+      - ./app:/app
+    links:
+      - database
+    environment:
+      TEMPAPP_DB_NAME: postgres
+      TEMPAPP_DB_USER: postgres
+      TEMPAPP_DB_PASSWORD: password
+      TEMPAPP_DB_HOST: database
+      TEMPAPP_DB_PORT: 5432
+      CELERY_HOST: redis
+      REDIS_HOST: redis
+      DJANGO_SETTINGS_MODULE: tempapp.settings.test
+      # Read from .env
+      STRIPE_API_KEY: $STRIPE_API_KEY
+      GOOGLE_OAUTH2_KEY: $GOOGLE_OAUTH2_KEY
+      GOOGLE_OAUTH2_SECRET: $GOOGLE_OAUTH2_SECRET
+      AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+      AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+
+volumes:
+  postgres-data:

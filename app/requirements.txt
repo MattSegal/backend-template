@@ -1,0 +1,54 @@
+# Backend
+django
+django-redis
+psycopg2-binary
+celery[redis]
+gunicorn
+
+# Logging and observability
+raven
+
+# Authentication
+social-auth-app-django
+django-rest-registration
+
+# API
+djangorestframework
+django-cors-headers
+
+# Payments
+stripe
+
+# Static files
+whitenoise
+
+# Admin
+django-extensions
+ipython
+
+# Development
+watchdog
+
+# Scraping and parsing.
+requests
+beautifulsoup4
+html5lib
+
+# File storage
+boto3
+python-slugify
+django-storages
+
+# Linting
+flake8
+isort
+black
+
+# Testing
+faker
+pytest-django
+pytest-factoryboy
+pytest-sugar
+fakeredis
+responses
+freezegun

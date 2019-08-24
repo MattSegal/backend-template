@@ -1,0 +1,68 @@
+version: "3"
+
+services:
+  redis:
+    image: redis
+  worker:
+    image: localhost:5000/tempapp
+    command: make worker-prod
+    environment:
+      - CELERY_HOST=redis
+      - REDIS_HOST=redis
+      - DJANGO_SETTINGS_MODULE=tempapp.settings.prod
+      - TEMPAPP_DB_NAME=tempapp
+      - TEMPAPP_DB_PORT=5432
+      - TEMPAPP_DB_HOST=$DOCKERHOST
+      # Postgres convenience
+      - PGHOST=$DOCKERHOST
+      - PGDATABASE=tempapp
+      - PGUSER=$TEMPAPP_DB_USER
+      - PGPASSWORD=$TEMPAPP_DB_PASSWORD
+      # Papertrail
+      - PAPERTRAIL_HOSTNAME=tempapp
+      - PAPERTRAIL_URL=$TEMPAPP_PAPERTRAIL_URL
+      - PAPERTRAIL_PORT=$TEMPAPP_PAPERTRAIL_PORT
+      # Pass-through
+      - DJANGO_SECRET_KEY
+      - TEMPAPP_RAVEN_DSN
+      - TEMPAPP_DB_USER
+      - TEMPAPP_DB_PASSWORD
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - STRIPE_API_KEY
+      - SENDGRID_API_KEY
+
+  web:
+    image: localhost:5000/tempapp
+    command: make web-prod
+    ports:
+      - 8005:8005
+    environment:
+      - CELERY_HOST=redis
+      - REDIS_HOST=redis
+      - DJANGO_SETTINGS_MODULE=tempapp.settings.prod
+      - TEMPAPP_DB_NAME=tempapp
+      - TEMPAPP_DB_PORT=5432
+      - TEMPAPP_DB_HOST=$DOCKERHOST
+      # Postgres convenience
+      - PGHOST=$DOCKERHOST
+      - PGDATABASE=tempapp
+      - PGUSER=$TEMPAPP_DB_USER
+      - PGPASSWORD=$TEMPAPP_DB_PASSWORD
+      # Papertrail
+      - PAPERTRAIL_HOSTNAME=tempapp
+      - PAPERTRAIL_URL=$TEMPAPP_PAPERTRAIL_URL
+      - PAPERTRAIL_PORT=$TEMPAPP_PAPERTRAIL_PORT
+      # Pass-through
+      - DJANGO_SECRET_KEY
+      - TEMPAPP_RAVEN_DSN
+      - TEMPAPP_DB_USER
+      - TEMPAPP_DB_PASSWORD
+      - GOOGLE_OAUTH2_KEY
+      - GOOGLE_OAUTH2_SECRET
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - STRIPE_API_KEY
+      - SENDGRID_API_KEY
+      - FACEBOOK_KEY
+      - FACEBOOK_SECRET
