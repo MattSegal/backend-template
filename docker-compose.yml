@@ -5,8 +5,7 @@ services:
     image: postgres
     volumes:
       - postgres-data:/var/lib/postgresql/data
-  redis:
-    image: redis
+
   worker:
     image: localhost:5000/tempapp
     command: make worker-local
@@ -15,24 +14,21 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./app:/app
-      - ./creds:/creds
     links:
       - database
-      - redis
     environment:
-      TEMPAPP_DB_NAME: postgres
-      TEMPAPP_DB_USER: postgres
-      TEMPAPP_DB_PASSWORD: password
-      TEMPAPP_DB_HOST: database
-      TEMPAPP_DB_PORT: 5432
-      CELERY_HOST: redis
-      REDIS_HOST: redis
       DJANGO_SETTINGS_MODULE: tempapp.settings.dev
+      PGHOST: database
+      PGDATABASE: postgres
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: password
       # Read from .env
       SENDGRID_API_KEY: $SENDGRID_API_KEY
       STRIPE_API_KEY: $STRIPE_API_KEY
       AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
       AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+
   web:
     image: localhost:5000/tempapp
     command: ./manage.py runserver 0.0.0.0:8000
@@ -42,17 +38,14 @@ services:
       - ./app:/app
     links:
       - database
-      - redis
       - worker
     environment:
-      TEMPAPP_DB_NAME: postgres
-      TEMPAPP_DB_USER: postgres
-      TEMPAPP_DB_PASSWORD: password
-      TEMPAPP_DB_HOST: database
-      TEMPAPP_DB_PORT: 5432
-      CELERY_HOST: redis
-      REDIS_HOST: redis
       DJANGO_SETTINGS_MODULE: tempapp.settings.dev
+      PGHOST: database
+      PGDATABASE: postgres
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: password
       # Read from .env
       SENDGRID_API_KEY: $SENDGRID_API_KEY
       STRIPE_API_KEY: $STRIPE_API_KEY
@@ -70,14 +63,12 @@ services:
     links:
       - database
     environment:
-      TEMPAPP_DB_NAME: postgres
-      TEMPAPP_DB_USER: postgres
-      TEMPAPP_DB_PASSWORD: password
-      TEMPAPP_DB_HOST: database
-      TEMPAPP_DB_PORT: 5432
-      CELERY_HOST: redis
-      REDIS_HOST: redis
       DJANGO_SETTINGS_MODULE: tempapp.settings.test
+      PGHOST: database
+      PGDATABASE: postgres
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: password
       # Read from .env
       STRIPE_API_KEY: $STRIPE_API_KEY
       GOOGLE_OAUTH2_KEY: $GOOGLE_OAUTH2_KEY

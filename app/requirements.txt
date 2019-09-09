@@ -1,12 +1,12 @@
 # Backend
 django
-django-redis
 psycopg2-binary
-celery[redis]
+django-q
 gunicorn
 
 # Logging and observability
-raven
+sentry-sdk
+django-q[sentry]
 
 # Authentication
 social-auth-app-django

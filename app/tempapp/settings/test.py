@@ -24,3 +24,13 @@ LOGGING = {
         },
     },
 }
+
+# Django-q cluster should run synchronously
+Q_CLUSTER = {
+    "name": "tempapp",
+    "sync": True,  # tasks run in sync
+    "timeout": 60,  # seconds,
+    "retry": 60,  # seconds,
+    "save_limit": 250,  # number of tasks saved to broker
+    "orm": "default",  # Use Django's ORM + database for broker
+}

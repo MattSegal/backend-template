@@ -17,11 +17,11 @@ INSTALLED_APPS = [
     "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
     "social_django",
-    "raven.contrib.django.raven_compat",
     "django_extensions",
     "rest_framework",
     "corsheaders",
     "rest_registration",
+    "django_q",
     "tempapp.apps.tempappConfig",
 ]
 
@@ -64,24 +64,11 @@ WSGI_APPLICATION = "tempapp.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": os.environ.get("TEMPAPP_DB_NAME"),
-        "USER": os.environ.get("TEMPAPP_DB_USER"),
-        "PASSWORD": os.environ.get("TEMPAPP_DB_PASSWORD"),
-        "HOST": os.environ.get("TEMPAPP_DB_HOST"),
-        "PORT": os.environ.get("TEMPAPP_DB_PORT"),
-    }
-}
-
-# Cache
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://redis:6379/0",
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "SOCKET_TIMEOUT": 5,
-            "SOCKET_CONNECT_TIMEOUT": 5,
-        },
+        "NAME": os.environ.get("PGDATABASE"),
+        "USER": os.environ.get("PGUSER"),
+        "PASSWORD": os.environ.get("PGPASSWORD"),
+        "HOST": os.environ.get("PGHOST"),
+        "PORT": os.environ.get("PGPORT"),
     }
 }
 
@@ -173,3 +160,12 @@ AWS_S3_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 
 # Django Extensions
 SHELL_PLUS_PRE_IMPORTS = [("tempapp.factories", "*")]
+
+# Django Q
+Q_CLUSTER = {
+    "name": "tempapp",
+    "timeout": 60,  # seconds,
+    "retry": 60,  # seconds,
+    "save_limit": 250,  # number of tasks saved to broker
+    "orm": "default",  # Use Django's ORM + database for broker
+}

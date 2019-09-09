@@ -1,9 +1,7 @@
-from celery import shared_task
-from celery.utils.log import get_task_logger
+import logging
 
-log = get_task_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
-@shared_task(bind=True)
-def do_nothing(self, pk):
-    log.info(f'Doing nothing with pk {pk}]')
+def do_nothing(pk):
+    logger.info(f'Doing nothing with pk {pk}]')

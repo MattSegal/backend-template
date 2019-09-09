@@ -5,16 +5,11 @@
 worker-local:
 	watchmedo \
 	auto-restart \
-	--directory /app/tempapp/ \
+	--directory /app/ \
 	--recursive \
 	--pattern '*.py' \
 	-- \
-	celery worker \
-	--broker redis://${CELERY_HOST}:6379 \
-	--app tempapp \
-	--concurrency 2 \
-	--beat \
-	--loglevel info
+	./manage.py qcluster
 
 
 worker-prod:
@@ -25,15 +20,8 @@ worker-prod:
 	--dest-port "${PAPERTRAIL_PORT}" \
 	--dest-host "${PAPERTRAIL_URL}" \
 	--pid-file /var/run/remote_syslog.pid \
-	/var/log/celery.log && \
-	echo "Starting celery" && \
-	celery worker \
-	--broker redis://${CELERY_HOST}:6379 \
-	--app tempapp \
-	--concurrency 2 \
-	--beat \
-	--logfile /var/log/celery.log \
-	--loglevel info
+	./manage.py qcluster
+
 
 web-local:
 	./manage.py runserver 0.0.0.0:8000

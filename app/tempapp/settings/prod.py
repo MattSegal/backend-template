@@ -1,3 +1,6 @@
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
 from . import *
 
 DEBUG = False
@@ -34,13 +37,9 @@ LOGOUT_REDIRECT_URL = "https://tempapp.com.au/"
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "root": {"level": "INFO", "handlers": ["console", "sentry"]},
+    "root": {"level": "INFO", "handlers": ["console"]},
     "handlers": {
         "console": {"level": "INFO", "class": "logging.StreamHandler"},
-        "sentry": {
-            "level": "ERROR",
-            "class": "raven.contrib.django.raven_compat.handlers.SentryHandler",
-        },
     },
     "loggers": {
         "django": {"handlers": ["console"], "level": "INFO", "propagate": True},
@@ -49,9 +48,18 @@ LOGGING = {
             "handlers": ["console"],
             "propagate": False,
         },
-        "raven": {"level": "DEBUG", "handlers": ["console"], "propagate": False},
-        "sentry.errors": {"level": "DEBUG", "handlers": ["console"], "propagate": False},
     },
 }
 
-RAVEN_CONFIG = {"dsn": os.environ.get("TEMPAPP_RAVEN_DSN")}
+sentry_sdk.init(
+    dsn=os.environ.get("RAVEN_DSN"), integrations=[DjangoIntegration()], environment="prod"
+)
+
+Q_CLUSTER = {
+    **Q_CLUSTER,
+     'error_reporter': {
+        'sentry': {
+            'dsn': os.environ.get("RAVEN_DSN")
+        }
+     }
+}
